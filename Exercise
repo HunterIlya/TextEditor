@@ -1,0 +1,70 @@
+import java.io.*;
+import java.util.Scanner;
+
+public class TextEditor {
+    private static final String FILE_NAME = "textfile.txt";
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("Оберіть дію:");
+            System.out.println("1 - Записати у файл");
+            System.out.println("2 - Прочитати файл");
+            System.out.println("3 - Вийти");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    writeToFile();
+                    break;
+                case 2:
+                    readFromFile();
+                    break;
+                case 3:
+                    System.out.println("Вихід з редактора.");
+                    return;
+                default:
+                    System.out.println("Невірне введення. Спробуйте ще раз.");
+            }
+        }
+    }
+
+    private static void writeToFile() {
+        System.out.println("Оберіть режим:");
+        System.out.println("1 - Перезаписати файл");
+        System.out.println("2 - Додати в кінець файлу");
+        int mode = scanner.nextInt();
+        scanner.nextLine();
+
+        boolean append = (mode == 2);
+
+        try (FileWriter writer = new FileWriter(FILE_NAME, append); BufferedWriter bw = new BufferedWriter(writer)) {
+            System.out.println("Введіть текст (для завершення введіть 'exit'):");
+            while (true) {
+                String line = scanner.nextLine();
+                if (line.equalsIgnoreCase("exit")) break;
+                bw.write(line);
+                bw.newLine();
+            }
+            System.out.println("Запис завершено.");
+        } catch (IOException e) {
+            System.out.println("Помилка при записі у файл: " + e.getMessage());
+        }
+    }
+
+    private static void readFromFile() {
+        try (FileReader reader = new FileReader(FILE_NAME); BufferedReader br = new BufferedReader(reader)) {
+            System.out.println("Вміст файлу:");
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Файл не знайдено.");
+        } catch (IOException e) {
+            System.out.println("Помилка при читанні файлу: " + e.getMessage());
+        }
+    }
+}
